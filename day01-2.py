@@ -2,25 +2,34 @@
 
 
 def part2(input_file):
-	with open(input_file, "r") as f:
-		inp = f.read()
+  with open(input_file, "r") as f:
+    sequence = f.read().strip().split(", ")
 
-	inp2 = [(s[0], int(s[1:])) for s in inp.split(", ")]
-	dirs = [0+1j, 1+0j, 0-1j, -1+0j]
-	cur_dir = 0
-	cur_pos = 0+0j
-	seen = {cur_pos}
-	for direction, num in inp2:
-		cur_dir = (cur_dir + 2*(direction == "L") - 1) % 4
-		for i in range(num):
-			cur_pos += dirs[cur_dir]
-			if cur_pos in seen:
-				break
-			seen.add(cur_pos)
-		else:
-			continue
-		break
-	return int(abs(cur_pos.imag) + abs(cur_pos.real))
+    pos = [0, 0]
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+    cur_dir = (0, 1)
+
+    visited = [[0, 0]]
+    count = 0
+
+    for move in sequence:
+      count += 1
+
+      if move[0] == "R":
+        cur_dir = directions[(directions.index(cur_dir) + 1) % 4]
+      elif move[0] == "L":
+        cur_dir = directions[(directions.index(cur_dir) - 1) % 4]
+
+      steps = int(move[1:])
+
+      for _ in range(steps):
+        pos[0] += cur_dir[0]
+        pos[1] += cur_dir[1]
+
+        if pos in visited:
+          return abs(pos[0]) + abs(pos[1])
+        else:
+          visited.append(pos[:])
 
 
 def main():
